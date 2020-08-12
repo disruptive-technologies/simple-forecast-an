@@ -68,15 +68,25 @@ def get_event_history(devices, event_params):
         # set endpoints for event history
         event_list_url = "{}/projects/{}/devices/{}/events".format(api_url_base, project_id, device_id)
     
+        # paging if necessary
         while event_params['page_token'] != '':
+            # get events
             event_listing = requests.get(event_list_url, auth=(username, password), params=event_params)
             event_json = event_listing.json()
     
-            event_params['page_token'] = event_json['nextPageToken']
-            events += event_json['events']
+            try:
+                # update page token
+                event_params['page_token'] = event_json['nextPageToken']
+
+                # append events to output
+                events += event_json['events']
+
+            except KeyError:
+                helpers.print_error('Page token lost. Please try again.', terminate=True)
     
-            if event_params['page_token'] is not '':
-                print('\t-- paging')
+                # cout
+                if event_params['page_token'] is not '':
+                    print('\t-- paging')
     
     # sort by time
     events.sort(key=json_sort_key, reverse=False)
@@ -119,7 +129,7 @@ def parse_arguments():
 
 
 def get_devices():
-    """Get list of devices in project.
+    """Get list of devices in DT Studio project.
 
     returns:
         devices -- List of devices.
@@ -136,6 +146,7 @@ def get_devices():
         devices = device_listing.json()['devices']
     except KeyError:
         # probably connection issues if we error here
+        # Note: Found that some VPNs cause a lot of corrupt packages from API (?)
         helpers.print_error(device_listing.json(), terminate=True)
 
     return devices
@@ -149,9 +160,10 @@ def event_history_stream(d, events):
         events -- List of historic events.
     """
 
-    # estimate occupancy for history 
+    # iterate event history 
     cc = 0
     for i, event_data in enumerate(events):
+        # print progress
         cc = helpers.loop_progress(cc, i, len(events), 25, name='event history')
 
         # serve event to director
