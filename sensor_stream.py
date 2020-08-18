@@ -74,19 +74,16 @@ def get_event_history(devices, event_params):
             event_listing = requests.get(event_list_url, auth=(username, password), params=event_params)
             event_json = event_listing.json()
     
-            try:
-                # update page token
+            if event_listing.status_code < 300:
                 event_params['page_token'] = event_json['nextPageToken']
-
-                # append events to output
                 events += event_json['events']
-
-            except KeyError:
-                helpers.print_error('Page token lost. Please try again.', terminate=True)
+            else:
+                print(event_json)
+                helpers.print_error('Status Code: {}'.format(event_listing.status_code), terminate=True)
     
-                # cout
-                if event_params['page_token'] is not '':
-                    print('\t-- paging')
+            # cout
+            if event_params['page_token'] is not '':
+                print('\t-- paging')
     
     # sort by time
     events.sort(key=json_sort_key, reverse=False)
