@@ -194,3 +194,18 @@ def algebraic_linreg(x, y):
     alpha = (s[(0,1)] - beta*s[(1,0)]) / s[(0,0)]
 
     return alpha, beta
+
+
+def json_sort_key(json):
+    """Return the event update time converted to unixtime.
+
+    Parameters:
+        json -- Event data json.
+
+    Returns:
+        unixtime -- Event data update time converted to unixtime.
+    """
+
+    timestamp = json['data']['temperature']['updateTime']
+    _, unixtime = convert_event_data_timestamp(timestamp)
+    return unixtime
