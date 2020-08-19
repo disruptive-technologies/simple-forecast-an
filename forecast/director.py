@@ -357,14 +357,17 @@ class Director():
             self.hax[i].cla()
 
             if sensor.n_samples > 1:
+                # get timeaxes
                 model_tx    = hlp.ux2tx(sensor.model['unixtime'])
-                forecast_tx = hlp.ux2tx(sensor.local_forecast['unixtime'])
-                self.hax[i].plot(model_tx, sensor.model['temperature'],             color=stl.NS[1],                 label='Temperature')
+
+                # get forecast
+                fx, ft, fu, fl = sensor.get_forecast(prm.n_forecast)
+                fx = hlp.ux2tx(fx)
+
+                self.hax[i].plot(model_tx, sensor.model['temperature'], color=stl.NS[1], label='Temperature')
                 self.hax[i].axvline(model_tx[-1], color='k', linestyle='--', label='Time Now')
-                if len(sensor.forecast['temperature']) > 1:
-                    self.hax[i].plot(forecast_tx, sensor.local_forecast['temperature'], color=stl.NS[1], linestyle='--', label='Forecast')
-                if sum(sensor.local_forecast['unixtime']) > 0:
-                    self.hax[i].fill_between(forecast_tx, sensor.local_forecast['lower_bound'], sensor.local_forecast['upper_bound'], color=stl.NS[1], alpha=0.33, label='Forecast Interval')
+                self.hax[i].plot(fx, ft, color=stl.NS[1], linestyle='--', label='Forecast')
+                self.hax[i].fill_between(fx, fl, fu, color=stl.NS[1], alpha=0.33, label='Forecast Interval')
                 self.hax[i].legend(loc='upper left')
                 self.hax[i].set_xlabel('Timestamp')
                 self.hax[i].set_ylabel('Temperature [degC]')

@@ -31,14 +31,6 @@ class Sensor():
             'season':            [], # modeled season
         }
 
-        # contains latest n-day forecast
-        self.local_forecast = {
-            'unixtime':       np.zeros(prm.n_forecast), # shared unixtime timeaxis
-            'temperature':    np.zeros(prm.n_forecast), # forecasted temperature values
-            'upper_bound':    np.zeros(prm.n_forecast), # upper confidence bounds
-            'lower_bound':    np.zeros(prm.n_forecast), # lower confidence bounds
-        }
-
         # contains all previous forecasts in history
         self.forecast = {
             'unixtime':    [], # shared unixtime timeaxis
@@ -75,16 +67,16 @@ class Sensor():
         if self.n_samples < prm.season_length * prm.n_seasons_init:
             return
         elif not self.initialised:
-            self.initialise_holt_winters()
+            self.__initialise_holt_winters()
         else:
             # iterate Holt-Winters
-            self.iterate_holt_winters()
+            self.__iterate_holt_winters()
 
         # forecast
-        self.model_forecast()
+        self.__model_forecast()
 
 
-    def initialise_holt_winters(self):
+    def __initialise_holt_winters(self):
         """Calculate initial level, trend and seasonal component.
         Based on: https://robjhyndman.com/hyndsight/hw-initialization/
         """
@@ -135,7 +127,7 @@ class Sensor():
         self.initialised = True
 
 
-    def iterate_holt_winters(self):
+    def __iterate_holt_winters(self):
         """Update level, trend and seasonal component of Holt-Winters model."""
 
         # calculate level (l), trend (b), and season (s) components
@@ -149,7 +141,7 @@ class Sensor():
         self.model['season'].append(s)
 
 
-    def model_forecast(self):
+    def __model_forecast(self):
         """Holt-Winters n-step ahead forecasting and prediction interval calculation.
         Forecast based on: https://otexts.com/fpp2/prediction-intervals.html
         Prediction intervals based on: https://otexts.com/fpp2/prediction-intervals.html
@@ -159,19 +151,11 @@ class Sensor():
         tax = np.array(self.model['unixtime'])[np.array(self.model['unixtime']) > int(self.model['unixtime'][-1])-60*60*24]
         ux_step = np.mean(tax[1:] - tax[:-1])
 
-        for t in range(prm.n_forecast):
-            # holt winters forecast
-            self.local_forecast['unixtime'][t] = self.model['unixtime'][-1] + (t+1)*ux_step
-            self.local_forecast['temperature'][t] = self.model['level'][-1] + t*self.model['trend'][-1] + self.model['season'][-prm.season_length + (t-1)%prm.season_length]
-
-            # prediction interval
-            k = ((t-1)/prm.season_length)
-            self.local_forecast['upper_bound'][t] = self.local_forecast['temperature'][t] + self.residual_std*np.sqrt(k+1)*prm.bound_modifier
-            self.local_forecast['lower_bound'][t] = self.local_forecast['temperature'][t] - self.residual_std*np.sqrt(k+1)*prm.bound_modifier
-
-        # append forecast
-        self.forecast['unixtime'].append(self.local_forecast['unixtime'][min(prm.n_step_ahead-1, prm.n_forecast-1)])
-        self.forecast['temperature'].append(self.local_forecast['temperature'][min(prm.n_step_ahead-1, prm.n_forecast-1)])
+        # forecast value
+        fux = (prm.n_step_ahead+1)*ux_step
+        fvv = self.model['level'][-1] + prm.n_step_ahead*self.model['trend'][-1] + self.model['season'][-prm.season_length + (prm.n_step_ahead-1)%prm.season_length]
+        self.forecast['unixtime'].append(fux)
+        self.forecast['temperature'].append(fvv)
 
         # calculate residual
         if len(self.forecast['temperature']) > prm.n_step_ahead:
@@ -182,6 +166,30 @@ class Sensor():
 
         # update residual standard deviation
         self.residual_std = np.std(np.array(self.forecast['residual'])[max(0, len(self.forecast['residual'])-prm.n_forecast):])
+
+
+    def get_forecast(self, n):
+        # initialise empty
+        timestamp   = np.zeros(n)*np.nan
+        temperature = np.zeros(n)*np.nan
+        upper_bound = np.zeros(n)*np.nan
+        lower_bound = np.zeros(n)*np.nan
+
+        if len(self.model['season']) > prm.season_length:
+            # use average step length the last 24h
+            tax = np.array(self.model['unixtime'])[np.array(self.model['unixtime']) > int(self.model['unixtime'][-1])-60*60*24]
+            ux_step = np.mean(tax[1:] - tax[:-1])
+            for t in range(n):
+                # holt winters forecast
+                timestamp[t] = self.model['unixtime'][-1] + (t+1)*ux_step
+                temperature[t] = self.model['level'][-1] + t*self.model['trend'][-1] + self.model['season'][-prm.season_length + (t-1)%prm.season_length]
+
+                # prediction interval
+                k = ((t-1)/prm.season_length)
+                upper_bound[t] = temperature[t] + self.residual_std*np.sqrt(k+1)*prm.bound_modifier
+                lower_bound[t] = temperature[t] - self.residual_std*np.sqrt(k+1)*prm.bound_modifier
+
+        return timestamp, temperature, upper_bound, lower_bound
 
 
     def init_plot(self, adjusted):
