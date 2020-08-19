@@ -4,9 +4,9 @@ import numpy             as np
 import matplotlib.pyplot as plt
 
 # project
-import forecast.helpers           as hlp
-import forecast.config.styling    as stl
-import forecast.config.parameters as prm
+import forecast.helpers  as hlp
+import config.styling    as stl
+import config.parameters as prm
 
 
 class Sensor():

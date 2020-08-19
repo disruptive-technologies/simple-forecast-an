@@ -11,10 +11,10 @@ import numpy             as np
 import matplotlib.pyplot as plt
 
 # project
-import forecast.config.styling    as stl
-import forecast.config.parameters as prm
-import forecast.helpers           as hlp
-from   forecast.sensor            import Sensor
+import config.styling    as stl
+import config.parameters as prm
+import forecast.helpers  as hlp
+from   forecast.sensor   import Sensor
 
 
 class Director():
@@ -254,6 +254,10 @@ class Director():
             Number of retries if connection lost.
 
         """
+
+        # don't run if local file
+        if self.args['path']:
+            return
     
         # cout
         print("Listening for events... (press CTRL-C to abort)")
