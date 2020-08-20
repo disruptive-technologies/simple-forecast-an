@@ -33,7 +33,6 @@ optional arguments:
   --starttime   Event history UTC starttime [YYYY-MM-DDTHH:MM:SSZ].
   --endtime     Event history UTC endtime [YYYY-MM-DDTHH:MM:SSZ].
   --plot        Plot the resulting forecast.
-  --plot-init   Plot the initialization results.
   --plot-debug  Plot algorithm operation.
 ```
 
