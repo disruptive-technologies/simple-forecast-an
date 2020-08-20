@@ -81,7 +81,6 @@ class Director():
     
         # boolean flags
         parser.add_argument('--plot',       action='store_true', help='Plot the resulting forecast.')
-        parser.add_argument('--plot-init',  action='store_true', help='Plot the initialization results.')
         parser.add_argument('--plot-debug', action='store_true', help='Plot algorithm operation.')
     
         # convert to dictionary

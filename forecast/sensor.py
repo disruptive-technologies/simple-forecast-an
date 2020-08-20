@@ -44,14 +44,6 @@ class Sensor():
         self.residual_std = 0
 
 
-    def initialise_init_plot(self):
-        """
-        Create figure and axis object for initialization plot.
-
-        """
-        self.ifig, self.iax = plt.subplots(3, 1, sharex=True)
-
-
     def new_event_data(self, event_data):
         """
         Receive new event from Director and iterate algorithm.
@@ -128,10 +120,6 @@ class Sensor():
         for i in range(self.n_samples):
             self.model['level'].append(linreg[i])
             self.model['trend'].append(b)
-
-        if self.args['plot_init']:
-            self.initialise_init_plot()
-            self.init_plot(adjusted)
 
         # flip flag
         self.initialised = True
@@ -215,30 +203,5 @@ class Sensor():
                 lower_bound[t] = temperature[t] - self.residual_std*np.sqrt(k+1)*prm.bound_modifier
 
         return timestamp, temperature, upper_bound, lower_bound
-
-
-    def init_plot(self, adjusted):
-        """
-        Plot the initialization results.
-
-        Parameters
-        ----------
-        adjusted : array_like 
-            Seasonally adjusted temperature data.
-
-        """
-
-        self.iax[0].plot(self.model['temperature'], color=stl.NS[1], label='Temperature')
-        self.iax[0].plot(adjusted, color=stl.VB[1], label='Adjusted Temperature')
-        self.iax[0].plot(self.model['level'], color=stl.SS[1], label='Initial Level')
-        self.iax[0].legend(loc='upper left')
-
-        self.iax[1].plot(self.model['trend'], color=stl.SS[1], label='Initial Trend')
-        self.iax[1].legend(loc='upper left')
-
-        self.iax[2].plot(df,  color=stl.NS[1], label='Differentiated')
-        self.iax[2].plot(self.model['season'], color=stl.SS[1], label='Initial Season')
-        self.iax[2].legend(loc='upper left')
-        plt.show()
 
 
