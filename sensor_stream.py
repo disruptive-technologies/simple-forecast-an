@@ -2,9 +2,9 @@
 from forecast.director import Director
 
 # Fill in from the Service Account and Project:
-USERNAME   = "bsarver24te000b24bpg"       # this is the key
-PASSWORD   = "8362c483e011479fb1066d9b20a0817b"     # this is the secret
-PROJECT_ID = "bsarslgg7oekgsc2jb20"                # this is the project id
+USERNAME   = "SERVICE_ACCOUNT_KEY"       # this is the key
+PASSWORD   = "SERVICE_ACCOUT_SECRET"     # this is the secret
+PROJECT_ID = "PROJECT_ID"                # this is the project id
 
 # set url base
 API_URL_BASE = "https://api.disruptive-technologies.com/v2"
