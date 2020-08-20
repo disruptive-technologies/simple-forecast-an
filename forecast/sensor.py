@@ -45,14 +45,22 @@ class Sensor():
 
 
     def initialise_init_plot(self):
+        """
+        Create figure and axis object for initialization plot.
+
+        """
         self.ifig, self.iax = plt.subplots(3, 1, sharex=True)
 
 
     def new_event_data(self, event_data):
-        """Receive new event from Director and iterate algorithm.
+        """
+        Receive new event from Director and iterate algorithm.
 
-        parameters:
-            event_data -- Event json containing temperature data.
+        Parameters
+        ----------
+        event_data : dict
+            Event json containing temperature data.
+
         """
 
         # convert timestamp to unixtime
@@ -77,8 +85,10 @@ class Sensor():
 
 
     def __initialise_holt_winters(self):
-        """Calculate initial level, trend and seasonal component.
+        """
+        Calculate initial level, trend and seasonal component.
         Based on: https://robjhyndman.com/hyndsight/hw-initialization/
+
         """
 
         # convert to numpy array for indexing
@@ -128,7 +138,10 @@ class Sensor():
 
 
     def __iterate_holt_winters(self):
-        """Update level, trend and seasonal component of Holt-Winters model."""
+        """
+        Update level, trend and seasonal component of Holt-Winters model.
+
+        """
 
         # calculate level (l), trend (b), and season (s) components
         l = prm.alpha*(self.model['temperature'][-1] - self.model['season'][-prm.season_length]) + (1 - prm.alpha)*(self.model['level'][-1] + self.model['trend'][-1])
@@ -142,9 +155,11 @@ class Sensor():
 
 
     def __model_forecast(self):
-        """Holt-Winters n-step ahead forecasting and prediction interval calculation.
+        """
+        Holt-Winters n-step ahead forecasting and prediction interval calculation.
         Forecast based on: https://otexts.com/fpp2/prediction-intervals.html
         Prediction intervals based on: https://otexts.com/fpp2/prediction-intervals.html
+
         """
 
         # use average step length the last 24h
@@ -169,6 +184,16 @@ class Sensor():
 
 
     def get_forecast(self, n):
+        """
+        Forecast n samples into the future using current HW state.
+
+        Parameters
+        ----------
+        n : int
+            Number of samples to forecast.
+
+        """
+
         # initialise empty
         timestamp   = np.zeros(n)*np.nan
         temperature = np.zeros(n)*np.nan
@@ -193,10 +218,14 @@ class Sensor():
 
 
     def init_plot(self, adjusted):
-        """Plot the initialization results.
+        """
+        Plot the initialization results.
 
-        parameters:
-            adjusted -- Seasonally adjusted temperature data.
+        Parameters
+        ----------
+        adjusted : array_like 
+            Seasonally adjusted temperature data.
+
         """
 
         self.iax[0].plot(self.model['temperature'], color=stl.NS[1], label='Temperature')

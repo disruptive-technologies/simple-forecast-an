@@ -153,7 +153,10 @@ class Director():
 
 
     def __spawn_devices(self):
-        """Use list of devices to spawn Sensor objects for each."""
+        """
+        Use list of devices to spawn Sensor objects for each.
+
+        """
 
         # empty lists of devices
         self.sensors = {}
@@ -303,7 +306,10 @@ class Director():
 
 
     def initialise_plot(self):
-        """Create figure and axis objects for progress plot."""
+        """
+        Create figure and axis objects for progress plot.
+
+        """
 
         self.hfig, self.hax = plt.subplots(len(self.sensors), 1, sharex=True)
         if len(self.sensors) == 1:
@@ -311,13 +317,19 @@ class Director():
 
 
     def initialise_debug_plot(self):
-        """Create figure and axis objects for debug plot."""
+        """
+        Create figure and axis objects for debug plot.
+
+        """
 
         self.dfig, self.dax = plt.subplots(4, 1, sharex=True)
 
 
     def print_devices_information(self):
-        """Print information about active devices in stream."""
+        """
+        Print information about active devices in stream.
+
+        """
 
         print('\nDirector initialised for sensors:')
         # print sensors
@@ -327,11 +339,16 @@ class Director():
 
 
     def __new_event_data(self, event_data, cout=True):
-        """Receive new event_data json and pass it along to the correct device object.
+        """
+        Receive new event_data json and pass it along to the correct device object.
 
-        Parameters:
-            event_data -- Data json containing new event data.
-            cout       -- Print device information to console if True.
+        Parameters
+        ----------
+        event_data : dict 
+            Data json containing new event data.
+        cout : bool 
+            Print device information to console if True.
+
         """
 
         # get id of source sensor
@@ -347,10 +364,14 @@ class Director():
 
 
     def plot_progress(self, blocking=False):
-        """Plot data and forecast from most recent sample.
+        """
+        Plot data and forecast from most recent sample.
 
-        parameters:
-            blocking -- Will block execution if True. Required for interaction.
+        Parameters
+        ----------
+        blocking : bool 
+            Will block execution if True. Required for interaction.
+
         """
 
         # iterate sensors
@@ -383,7 +404,10 @@ class Director():
 
 
     def plot_debug(self):
-        """Plot data and more detailed algorithm operation."""
+        """
+        Plot data and more detailed algorithm operation.
+
+        """
 
         # iterate sensors
         for i, sid in enumerate(self.sensors.keys()):
