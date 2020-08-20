@@ -7,14 +7,20 @@ import pandas as pd
 
 
 def convert_event_data_timestamp(ts):
-    """Convert the default event_data timestamp format to Pandas and unixtime format.
+    """
+    Convert the default event_data timestamp format to Pandas and unixtime format.
 
-    Parameters:
-        ts -- event_data timestamp format
+    Parameters
+    ----------
+    ts : str
+        UTC timestamp in custom API event data format.
 
-    Returns:
-        timestamp -- Pandas Timestamp object format.
-        unixtime  -- Integer number of seconds since 1 January 1970.
+    Returns
+    -------
+    timestamp : datetime
+        Pandas Timestamp object format.
+    unixtime : int
+        Integer number of seconds since 1 January 1970.
 
     """
 
@@ -25,13 +31,19 @@ def convert_event_data_timestamp(ts):
 
 
 def ux2tx(ux):
-    """Convert unixtime to datetime format.
+    """
+    Convert unixtime to datetime format.
 
-    parameters:
-        ux -- Unixtime integer.
+    Parameters
+    ----------
+    ux : int 
+        Time in number of seconds in 01-01-1970.
 
-    returns:
-        dt -- Datetime format.
+    Returns
+    -------
+    dt : datetime 
+        Time in Pandas datetime format.
+
     """
 
     # create datetime
@@ -41,11 +53,13 @@ def ux2tx(ux):
 
     
 def print_error(text, terminate=True):
-    """Print an error to console.
-    
-    parameters:
-        text      -- String to be printed with error.
-        terminate -- Terminates execution if True.
+    """
+    Print an error message and terminate as desired.
+
+    Parameters
+    ----------
+    terminate : bool
+        Terminate execution if True.
     """
 
     print('ERROR: {}'.format(text))
@@ -53,18 +67,29 @@ def print_error(text, terminate=True):
         sys.exit()
 
 
-def loop_progress(i_track, i, N_max, N_steps, name=None, acronym=' '):
-    """ print progress to console
+def loop_progress(i_track, i, n_max, n_steps, name=None, acronym=' '):
+    """
+    Print loop progress to console.
 
-    arguments:
-    i_track:    tracks how far the progress has come:
-    i:          what the current index is.
-    N_max:      the maximum value which indicates progress done.
-    N_steps:    how many steps which are counted.
+    Parameters
+    ----------
+    i_track : int
+        Tracks how far the progress has come:
+    i : int
+        Current index in loop.
+    n_max : int
+        Maximum value which indicates progress done.
+    n_steps : int
+        Number of steps to be counted.
+    name : str
+        Title of progress print.
+    acronym : str 
+        An acronym to put after progress bar.
+
     """
 
     # number of indices in each progress element
-    part = N_max / N_steps
+    part = n_max / n_steps
 
     if i_track == 0:
         # print empty bar
@@ -73,29 +98,35 @@ def loop_progress(i_track, i, N_max, N_steps, name=None, acronym=' '):
             print('    └── Progress:')
         else:
             print('    └── {}:'.format(name))
-        print('        ├── [ ' + (N_steps-1)*'-' + ' ] ' + acronym)
+        print('        ├── [ ' + (n_steps-1)*'-' + ' ] ' + acronym)
         i_track = 1
     elif i > i_track + part:
         # update tracker
         i_track = i_track + part
 
         # print bar
-        print('        ├── [ ' + int(i_track/part)*'#' + (N_steps - int(i_track/part) - 1)*'-' + ' ] ' + acronym)
+        print('        ├── [ ' + int(i_track/part)*'#' + (n_steps - int(i_track/part) - 1)*'-' + ' ] ' + acronym)
 
     # return tracker
     return i_track
 
 
 def dt_timestamp_format(tx):
-    """Convert datetime object to DT timestamp format.
+    """
+    Convert datetime object to DT timestamp format.
 
-    parameters:
-        tx -- Datetime object.
+    Parameters
+    ----------
+    tx : Pandas datetime object.
 
-    returns:
-        dtt -- DT timestamp format.
+    Returns
+    -------
+    dtt : str 
+        DT timestamp format.
+
     """
 
+    # isolate each component
     year   = '{:04}'.format(tx.year)
     month  = '{:02}'.format(tx.month)
     day    = '{:02}'.format(tx.day)
@@ -103,19 +134,28 @@ def dt_timestamp_format(tx):
     minute = '{:02}'.format(tx.minute)
     second = '{:02}'.format(tx.second)
 
+    # combine string
     dtt = year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z'
+
     return dtt
 
 
 def api_json_format(timestamp, temperature):
-    """Imitate API json format.
+    """
+    Imitate API json format.
 
-    parameters:
-        timestamp   -- Event UTC timestamp.
-        temperature -- Event temperature value.
+    Parameters
+    ----------
+    timestamp : str 
+        Event UTC timestamp.
+    temperature : float 
+        Event temperature value.
 
-    returns:
-        json -- API json format.
+    Returns
+    -------
+    json : dict 
+        API json format.
+
     """
 
     json = {
@@ -127,17 +167,24 @@ def api_json_format(timestamp, temperature):
             }
         }
     }
+
     return json
 
 
 def import_as_event_history(path):
-    """Import file as event history json format.
+    """
+    Import file as event history json format.
 
-    parameters:
-        path -- Absolute path to file.
+    Parameters
+    ----------
+    path : str 
+        Absolute path to file.
 
-    returns:
-        events -- List of historic events.
+    Returns
+    -------
+    events : list 
+        List of historic events.
+
     """
 
     # initialise output list
@@ -168,15 +215,23 @@ def import_as_event_history(path):
 
 
 def algebraic_linreg(x, y):
-    """Algebraic linear regression.
+    """
+    Algebraic linear regression.
 
-    parameters:
-        x -- x-axis of data to be fitted.
-        y -- y-axis of data to be fitted.
+    Parameters
+    ----------
+    x : array_like 
+        x-axis of data to be fitted.
+    y : array_like 
+        y-axis of data to be fitted.
 
-    returns:
-        alpha -- Line interscept.
-        beta  -- Line slope.
+    Returns
+    -------
+    alpha : float 
+        Fitted line interscept.
+    beta : float
+        Fitted line slope.
+
     """
 
     s = {
@@ -197,15 +252,23 @@ def algebraic_linreg(x, y):
 
 
 def json_sort_key(json):
-    """Return the event update time converted to unixtime.
+    """
+    Return the event update time converted to unixtime.
 
-    Parameters:
-        json -- Event data json.
+    Parameters
+    ----------
+    json : dict 
+        Event data json as dictionary.
 
-    Returns:
-        unixtime -- Event data update time converted to unixtime.
+    Returns
+    -------
+    unixtime : int 
+        Event data update time in seconds since 01-01-1970.
+
     """
 
     timestamp = json['data']['temperature']['updateTime']
     _, unixtime = convert_event_data_timestamp(timestamp)
+
     return unixtime
+
