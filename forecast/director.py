@@ -235,9 +235,9 @@ class Director():
             # serve event to director
             self.__new_event_data(event_data, cout=False)
 
-            # plot debug
-            if self.args['plot_debug']:
-                self.plot_debug()
+        # plot debug
+        if self.args['plot_debug']:
+            self.plot_debug()
     
         # initialise plot
         if self.args['plot']:
@@ -414,33 +414,32 @@ class Director():
             # isolate sensor
             sensor = self.sensors[sid]
 
-            if sensor.n_samples % int(prm.season_length/0.25) == 0 and len(sensor.forecast['unixtime']) > 0:
+            if len(sensor.forecast['unixtime']) > 0:
 
-                n_days = 20
-                tax = np.array(sensor.model['unixtime'])[np.array(sensor.model['unixtime']) > int(sensor.model['unixtime'][-1])-60*60*24*n_days]
-                fax = np.array(sensor.forecast['unixtime'])[np.array(sensor.forecast['unixtime']) > int(sensor.forecast['unixtime'][-1])-60*60*24*n_days]
+                tax = np.array(sensor.model['unixtime'])
+                fax = np.array(sensor.forecast['unixtime'])
 
                 self.dax[0].cla()
-                self.dax[0].plot(tax, np.array(sensor.model['temperature'])[-len(tax):], color=stl.NS[1], label='Temperature')
+                self.dax[0].plot(tax, np.array(sensor.model['temperature']), color=stl.NS[1], label='Temperature')
                 self.dax[0].legend(loc='upper left')
                 self.dax[0].set_ylabel('Temperature [degC]')
                 self.dax[0].set_xlim([tax[0], tax[-1]])
                 self.dax[1].cla()
-                self.dax[1].plot(tax, np.array(sensor.model['level'])[-len(tax):], color=stl.NS[1], label='Level')
+                self.dax[1].plot(tax, np.array(sensor.model['level']), color=stl.NS[1], label='Level')
                 self.dax[1].legend(loc='upper left')
                 self.dax[1].set_ylabel('Temperature [degC]')
                 self.dax[1].set_xlim([tax[0], tax[-1]])
                 self.dax[2].cla()
-                self.dax[2].plot(tax, np.array(sensor.model['trend'])[-len(tax):], color=stl.NS[1], label='Trend')
+                self.dax[2].plot(tax, np.array(sensor.model['trend']), color=stl.NS[1], label='Trend')
                 self.dax[2].legend(loc='upper left')
                 self.dax[2].set_ylabel('Slope')
                 self.dax[2].set_xlim([tax[0], tax[-1]])
                 self.dax[3].cla()
-                self.dax[3].plot(tax, np.array(sensor.model['season'])[-len(tax):], color=stl.NS[1], label='Season')
+                self.dax[3].plot(tax, np.array(sensor.model['season']), color=stl.NS[1], label='Season')
                 self.dax[3].legend(loc='upper left')
                 self.dax[3].set_xlabel('Unixtime')
                 self.dax[3].set_ylabel('Temperature [degC]')
                 self.dax[3].set_xlim([tax[0], tax[-1]])
 
-                plt.waitforbuttonpress()
+        plt.show()
 
