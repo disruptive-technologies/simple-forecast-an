@@ -1,11 +1,8 @@
 # packages
-import sys
 import numpy             as np
-import matplotlib.pyplot as plt
 
 # project
 import forecast.helpers  as hlp
-import config.styling    as stl
 import config.parameters as prm
 
 

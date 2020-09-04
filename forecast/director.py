@@ -1,6 +1,5 @@
 # packages
 import os
-import sys
 import time
 import json
 import argparse
@@ -206,7 +205,7 @@ class Director():
                     print(event_json)
                     hlp.print_error('Status Code: {}'.format(event_listing.status_code), terminate=True)
         
-                if self.history_params['page_token'] is not '':
+                if self.history_params['page_token'] != '':
                     print('\t-- paging')
         
         # sort event history in time
@@ -416,7 +415,6 @@ class Director():
             if len(sensor.forecast['unixtime']) > 0:
 
                 tax = np.array(sensor.model['unixtime'])
-                fax = np.array(sensor.forecast['unixtime'])
 
                 self.dax[0].cla()
                 self.dax[0].plot(tax, np.array(sensor.model['temperature']), color=stl.NS[1], label='Temperature')
