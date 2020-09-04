@@ -4,7 +4,7 @@
 This repository contains the example code talked about in [this application note](https://support.disruptive-technologies.com/hc/en-us/articles/360015485620-Simple-Temperature-Forecasting-for-Substation-Transformers), presenting a method of using the Disruptive Technologies (DT) Wireless Temperature Sensors for forecasting future values by applying simple signal modelling. Written in Python 3, it uses the DT Developer API to communicate with a DT Studio project and its sensors. By calling *sensor_stream.py*, a temperature forecast will continuously be calculated for previous history data and/or a live stream of datapoints from the moment of execution.
 
 ## Before Running Any code
-A DT Studio project containing temperature sensors should be made. All temperature sensors in the project will attemped forecasted upon.
+A DT Studio project containing temperature sensors should be made. All temperature sensors in the project will attemped forecasted upon. More information regarding project setup can be found in the application note.
 
 ## Environment Setup
 Dependencies can be installed using pip.
